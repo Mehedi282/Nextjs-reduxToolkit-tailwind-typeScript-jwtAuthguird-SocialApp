@@ -4,12 +4,14 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout, selectIsLoggedIn } from '@/redux/slices/isLogedIn';
+import { Home } from '@mui/icons-material';
+
 
 const Navbar = () => {
-  const dispatch= useDispatch()
+  const dispatch = useDispatch()
   const router = useRouter();
   const isLoggedIn = useSelector(selectIsLoggedIn);
- 
+
 
   // Function to handle logout
   const handleLogout = () => {
@@ -35,17 +37,15 @@ const Navbar = () => {
 
         {/* Navigation links */}
         {isLoggedIn && (
-          <div className="hidden md:block">
+          <div className="hidden md:block ">
             <Link href="/home" className="text-white ml-4 hover:text-gray-300">
-              Home
+              <span className="material-icons">home</span>
             </Link>
             <Link href="profile" className="text-white ml-4 hover:text-gray-300">
-              Profile
+              <span className="material-icons">
+                account_circle
+              </span>
             </Link>
-            <a href="#" className="text-white ml-4 hover:text-gray-300">
-              Services
-            </a>
-            {/* Add more links as needed */}
           </div>
         )}
 

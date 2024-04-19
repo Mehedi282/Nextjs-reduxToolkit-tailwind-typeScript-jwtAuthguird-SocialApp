@@ -2,7 +2,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  isLoggedIn: localStorage.getItem('isLoggedIn') === 'true' || false,
+  isLoggedIn: typeof window !== 'undefined' && localStorage.getItem('isLoggedIn') === 'true' || false,
 };
 
 export const userSlice = createSlice({

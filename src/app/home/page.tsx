@@ -3,16 +3,10 @@ import AuthGuird from '@/authGuird/authGuird'
 import { useGetUserQuery } from '@/redux/slices/userApi';
 import React from 'react'
 
-function page() {
+function Page() {
   AuthGuird();
-  const {data, error, isLoading} =  useGetUserQuery();
-  if(error){
-    return (
-      <div className='text-center, p-10'>s
-       Error: {error.messsae}
-      </div>
-    )
-  }
+  const {data, error, isLoading} =  useGetUserQuery(arguments);
+  
 
   if(isLoading){
     return(
@@ -24,8 +18,8 @@ function page() {
   
   return (
     <div className='h-screen flex flex-row justify-start'>
-    <div className='w-4/12'>
-    {
+    <div className='w-4/12 bg-slate-500'>
+    {/* {
       data.map((userInfo)=>{
        return (
         <>
@@ -35,13 +29,14 @@ function page() {
         </>
        )
       })
-    }
+    } */}
+    fsdfsd
     </div>
-    <div className='w-8/12'>
+    <div className='w-8/12 bg-zinc-500'>
       news feed
     </div>
     </div>
   )
 }
 
-export default page
+export default Page

@@ -52,10 +52,10 @@ const LoginPage = () => {
     };
 
     return (
-        <div className="flex justify-center items-center h-screen bg-gray-700">
+        <div className="flex justify-center items-center h-screen bg-gray-900">
             <ToastContainer />
             <div className="w-full max-w-md">
-                <form className="bg-slate-900 shadow-md rounded px-8 pt-6 pb-8 mb-4" onSubmit={handleLogin}>
+                <form className="bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4" onSubmit={handleLogin}>
                     <div className="mb-4">
                         <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
                             Email

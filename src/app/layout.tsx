@@ -19,11 +19,17 @@ export default function RootLayout({
   return (
     <ReduxRapper>
       <html lang="en">
+        <head>
+          <link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/icon?family=Material+Icons"
+          />
+        </head>
         <body className={inter.className}>
-          <Navbar/>
+          <Navbar />
           {children}
-          
-          </body>
+
+        </body>
       </html>
     </ReduxRapper>
   );
