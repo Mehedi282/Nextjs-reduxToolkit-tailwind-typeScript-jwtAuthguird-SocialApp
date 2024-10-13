@@ -1,11 +1,16 @@
 'use client'
 import AuthGuird from '@/authGuird/authGuird'
+import PostModal from '@/components/modals/CreatePost';
+import ProfileFormModal from '@/components/modals/EditProfile';
+import UpdateProfileFormModal from '@/components/modals/UpdateProfile';
 import { Post } from '@/interfaces/user';
 import { useGetUserByIdQuery } from '@/redux/slices/userApi';
 import React from 'react';
 
+
 function Page() {
-  const { data, error, isLoading } = useGetUserByIdQuery(null);
+  const id = localStorage.getItem('userId');
+  const { data, error, isLoading } = useGetUserByIdQuery(id);
   AuthGuird();
 
   if (isLoading) {
@@ -16,16 +21,18 @@ function Page() {
     )
   }
 
-  const userDetails = data?.userDetails; 
+  const userDetails = data?.userDetails;
   const likes = data?.likes || [];
   const posts = data?.posts || [];
+
+
 
   return (
     <div className='px-20 h-screen pt-5 flex flex-row bg-gray-900 text-white gap-5' >
       <div className='w-5/12 flex flex-col gap-5 bg-gray-800 rounded-xl pt-2'>
         <div className='flex flex-col items-center w-full gap-2'>
-          <img className='h-80 w-fit rounded-full ' src={userDetails?.profilePicture} alt="Profile" />
-          <p className='font-serif font-bold text-4xl'>{userDetails?.fullName}</p>
+          <img className='h-64 w-64 rounded-full ' src={userDetails?.profilePicture || 'https://www.pngplay.com/wp-content/uploads/12/User-Avatar-Profile-Background-PNG-Clip-Art.png'} alt="Profile" />
+          <p className='font-serif font-bold text-4xl'>{data?.fullName}</p>
         </div>
         <div className='flex flex-col gap-3 mx-5'>
           <div className='flex flex-row gap-2'>
@@ -41,10 +48,12 @@ function Page() {
             <p className='font-serif font-bold'>Studied at {userDetails?.education}</p>
           </div>
         </div>
+      {userDetails == null? <ProfileFormModal/>: <UpdateProfileFormModal/>}
+        
       </div>
 
       <div className='w-7/12 bg-gray-800 px-5 pt-2 rounded-xl overflow-hidden overflow-y-auto no-scrollbar '>
-        <div>create post</div>
+        <PostModal/>
         <div>
           {posts.map((postData: Post) => (
             <div key={postData.id} className="my-4 p-4  bg-gray-700 rounded-md ">

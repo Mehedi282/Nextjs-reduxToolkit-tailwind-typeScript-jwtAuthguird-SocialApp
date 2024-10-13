@@ -1,15 +1,30 @@
+export interface UserDetails {
+  id: number;
+  profilePicture: string;
+  location: string;
+  jobDetails: string;
+  education: string;
+  userId: number;
+}
+
 export interface User {
-    id: number,
-    fullName: string,
-    email?: string, // Optional property (if email might be missing for some users)
-    // password should not be included in the interface
-    createdAt: string;
-  }
+  id: number;
+  fullName: string;
+  email: string;
+  password: string; // Consider omitting this if not needed
+  createdAt: string; // You might want to use a Date type if parsing
+  userDetails: UserDetails;
+}
 
+export interface Like {
+  id: number;
+}
 
-  export interface Post {
-    id: number;
-    photos: string[]; // Array of image URLs as strings
-    content: string;
-    userId: number;
-  }
+export interface Post {
+  id: number;
+  photos: string; // Array of image URLs
+  content: string;
+  userId: number;
+  likes: Like[]; // Array of Like objects
+  user: User; // User object with details
+}

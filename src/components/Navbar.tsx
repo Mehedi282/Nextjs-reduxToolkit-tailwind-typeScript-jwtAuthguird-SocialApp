@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout, selectIsLoggedIn } from '@/redux/slices/isLogedIn';
 import { Home } from '@mui/icons-material';
+import todayLogo from '../../public/assets/today-logo-73-5813-removebg-preview.png'
+import Image from 'next/image';
 
 
 const Navbar = () => {
@@ -31,7 +33,7 @@ const Navbar = () => {
         {/* Logo on the left */}
         <div className="flex-shrink-0">
           <Link href={homeRoute} className="text-white font-bold text-lg">
-            Today
+          <Image src={todayLogo} alt="Today" width={80} height={90} />
           </Link>
         </div>
 

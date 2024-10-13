@@ -14,6 +14,7 @@ export const api = createApi({
       return headers;
     },
   }),
+  tagTypes: ['User'], // Define the tag types for caching
   endpoints: (builder) => ({
     register: builder.mutation({
       query: (userData) => ({
@@ -21,6 +22,7 @@ export const api = createApi({
         method: 'POST',
         body: userData,
       }),
+      invalidatesTags: [{ type: 'User', id: 'LIST' }], // Invalidate user cache
     }),
     login: builder.mutation({
       query: (loginData) => ({
@@ -28,20 +30,27 @@ export const api = createApi({
         method: 'POST',
         body: loginData,
       }),
+      invalidatesTags: [{ type: 'User', id: 'LIST' }], // Invalidate user cache on login
     }),
     getUser: builder.query({
-      query: () => '/user'
+      query: () => '/user',
+      providesTags: [{ type: 'User', id: 'LIST' }], // Provide a tag for the user list
     }),
     getUserById: builder.query({
-      query: (id) => {
-        const userId = localStorage.getItem('userId');
-        return {
-          url: `/user/${userId}`, // Adjust the endpoint according to your backend API's endpoint for fetching user by id
-          method: 'GET',
-        };
-      },
+      query: (userId) => ({
+        url: `/user/${userId}`, // Fetch user by ID
+        method: 'GET',
+      }),
+      providesTags: (result, error, userId) => 
+        result ? [{ type: 'User', id: userId }] : [], // Provide a tag for the specific user
     }),
   }),
 });
 
-export const { useRegisterMutation, useLoginMutation, useGetUserQuery, useGetUserByIdQuery } = api;
+// Export hooks for usage in functional components
+export const { 
+  useRegisterMutation, 
+  useLoginMutation, 
+  useGetUserQuery, 
+  useGetUserByIdQuery 
+} = api;

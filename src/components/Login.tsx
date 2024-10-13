@@ -6,6 +6,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useRouter } from 'next/navigation'
 import { useDispatch } from 'react-redux';
 import {doLogin} from '@/redux/slices/isLogedIn';
+import { MutationResult } from '@/interfaces/mutationResult';
+
 
 const LoginPage = () => {
     const dispatch = useDispatch();
@@ -13,17 +15,17 @@ const LoginPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const handleEmailChange = (e) => {
+    const handleEmailChange = (e:any) => {
         setEmail(e.target.value);
     };
 
-    const handlePasswordChange = (e) => {
+    const handlePasswordChange = (e:any) => {
         setPassword(e.target.value);
     };
 
     const router = useRouter();
 
-    const handleLogin = async (e) => {
+    const handleLogin = async (e:any) => {
         e.preventDefault();
         const loginData = {
             email: email,
@@ -36,7 +38,7 @@ const LoginPage = () => {
             const result: MutationResult = await login(loginData);
             if (result.error) {
                 console.error('Failed to Login:', result);
-                toast.error(result.error.data.message+'.' + " " +'Login failed. Please try again.');
+                toast.error('Login failed. Please try again.');
               } else {
                 console.log('Registration successful:', result.data);
                 toast.success('Login successful!');
@@ -85,12 +87,12 @@ const LoginPage = () => {
                             required
                         />
                     </div>
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-center">
                         <button
                             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                             type="submit"
                         >
-                            Sign In
+                            Submit
                         </button>
                     </div>
                 </form>

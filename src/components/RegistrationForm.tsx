@@ -1,10 +1,11 @@
 "use client"
+import { MutationResult } from '@/interfaces/mutationResult';
 import { useRegisterMutation } from '@/redux/slices/userApi';
 import { useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
 const RegisterForm = () => {
+  
   const [register, { isLoading, isError }] = useRegisterMutation();
   const [formData, setFormData] = useState({
     fullName: '',
@@ -25,12 +26,12 @@ const RegisterForm = () => {
     try {
       const result: MutationResult = await register(formData);
       if (result.error) {
-        console.error('Failed to register:', result.error.data.message);
-        toast.error(result.error.data.message+'Registration failed. Please try again.');
+        // console.error('Failed to register:', result.error.data.message);
+        toast.error('Registration failed. Please try again.');
       } else {
         console.log('Registration successful:', result.data);
         toast.success('Registration successful!');
-        // Additional actions for successful registration
+        
       }
     } catch (err) {
       console.error('Failed to register:', err);
