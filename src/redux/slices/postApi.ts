@@ -14,7 +14,7 @@ export const postApi = createApi({
       return headers;
     },
   }),
-  tagTypes: ['Posts'], // Define tag types for invalidation
+  tagTypes: ['Posts','User'], // Define tag types for invalidation
   endpoints: (builder) => ({
     createPost: builder.mutation({
       query: (formDataToSubmit) => {
@@ -25,15 +25,27 @@ export const postApi = createApi({
           body: formDataToSubmit,
         };
       },
-      invalidatesTags: [{ type: 'Posts', id: 'LIST' }], // Invalidate the Posts list on create
+      invalidatesTags: (result, error, { userId }) => [
+        { type: 'Posts', id: 'LIST' },
+        { type: 'User', id: 'USER' }, 
+      ], 
     }),
 
     getAllPoets: builder.query({
       query: () => '/post',
       
     }),
+
+    deletePost: builder.mutation({
+      query: (id) => {
+        return {
+          url: `/post/${id}`,
+          method:'DELETE'
+        };
+      },
+    }),
+
   }),
 });
 
-// Export hooks for usage in functional components
-export const { useCreatePostMutation, useGetAllPoetsQuery } = postApi;
+export const { useCreatePostMutation, useGetAllPoetsQuery, useDeletePostMutation} = postApi;

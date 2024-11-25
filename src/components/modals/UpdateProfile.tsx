@@ -1,7 +1,9 @@
 'use client'
 
 import { useAddUserDetailsMutation, useEditUserDetailsMutation, useGetUserDetailsByIdQuery } from '@/redux/slices/editProfileApi';
+import { setSubmissionSuccess } from '@/redux/slices/isSubmitted';
 import { useState, ChangeEvent, FormEvent, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'; // Import Toast CSS
 
@@ -13,6 +15,7 @@ interface FormData {
 }
 
 export default function UpdateProfileFormModal() {
+    const dispatch = useDispatch();
     const userId = localStorage.getItem('userId');
     const { data, isError: isGetUserError, isLoading: isGetUserLoading } = useGetUserDetailsByIdQuery(userId);
     const [editUserDetails, { isLoading: isAddUserLoading, isError: isAddUserError  }] = useEditUserDetailsMutation();
@@ -73,7 +76,7 @@ export default function UpdateProfileFormModal() {
                 // Handle the success case
                 console.log('Submission successful:', result.data);
                 toast.success('Submission successful!');
-                window.location.reload();
+                dispatch(setSubmissionSuccess(true));
             
             }
         } catch (error) {

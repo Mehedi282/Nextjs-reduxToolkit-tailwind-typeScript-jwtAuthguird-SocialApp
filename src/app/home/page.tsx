@@ -1,16 +1,47 @@
 'use client'
 import AuthGuird from '@/authGuird/authGuird'
 import { Post, User } from '@/interfaces/user';
+import { resetSubmissionSuccess, selectSubmissionSuccess } from '@/redux/slices/isSubmitted';
 import { useGetAllPoetsQuery } from '@/redux/slices/postApi';
 import { useGetUserQuery } from '@/redux/slices/userApi';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 
 
 function Page() {
   AuthGuird();
-  const { data: users, error, isLoading } = useGetUserQuery(null);
-  const { data: posts, isError, isLoading: getpostLoading } = useGetAllPoetsQuery(null);
+  const [id, setId] = useState<string | null>(null);
+  useEffect(() => {
+    const userId = localStorage.getItem('userId');
+    setId(userId);
+  }, []);
+
+
+  const { data: allUsers, error, isLoading } = useGetUserQuery(null);
+  const { data: postsData, isError, isLoading: getpostLoading, refetch } = useGetAllPoetsQuery(null);
+
+  const submissionSuccess = useSelector(selectSubmissionSuccess);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (submissionSuccess) {
+      refetch();
+      dispatch(resetSubmissionSuccess()); 
+    }
+  }, [submissionSuccess, refetch, dispatch]);
+
+ let users =[];
+ if (allUsers && id) {
+  users = [...allUsers].filter(x => x.id !== parseInt(id, 10));
+}
+
+
+  let posts =[]
+
+if (!isError && !getpostLoading && postsData) {
+  posts = [...postsData].sort((a, b) => b.id - a.id);
+}
 
 
 
@@ -26,13 +57,16 @@ function Page() {
   return (
     <div className='h-screen flex flex-row justify-center text-white'>
       <div className='w-5/12 bg-gray-900 pl-60 '>
-      <div className='flex justify-center pt-5'><h1>Other Users</h1></div>
+      <div className='flex justify-center pt-5'>
+
+        <h1>Other Users</h1>
+        </div>
         {
           users.map((userInfo: User) => {
             return (
               <>
                 <div className='flex gap-5 p-3 '>
-                  <div><img src={userInfo?.userDetails?.profilePicture} className="w-20 h-20 rounded-full mr-2" alt="Profile" /></div>
+                  <div><img src={userInfo?.userDetails?.profilePicture || 'https://www.pngplay.com/wp-content/uploads/12/User-Avatar-Profile-Background-PNG-Clip-Art.png'} className="w-20 h-20 rounded-full mr-2" alt="Profile" /></div>
                   <div><div className=' py-2  gap-2'>
                     <div className='font-extrabold'>{userInfo.fullName}</div>
                     <div>{userInfo?.userDetails?.location}</div>

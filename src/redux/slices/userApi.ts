@@ -36,18 +36,20 @@ export const api = createApi({
       query: () => '/user',
       providesTags: [{ type: 'User', id: 'LIST' }], // Provide a tag for the user list
     }),
+
+
     getUserById: builder.query({
       query: (userId) => ({
         url: `/user/${userId}`, // Fetch user by ID
         method: 'GET',
       }),
       providesTags: (result, error, userId) => 
-        result ? [{ type: 'User', id: userId }] : [], // Provide a tag for the specific user
+        result ? [{ type: 'User', id: 'USER' }] : [], 
     }),
   }),
 });
 
-// Export hooks for usage in functional components
+// Export hooks for usage in functional components 
 export const { 
   useRegisterMutation, 
   useLoginMutation, 

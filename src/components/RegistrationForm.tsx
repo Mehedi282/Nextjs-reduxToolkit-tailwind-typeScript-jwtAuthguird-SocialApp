@@ -4,8 +4,11 @@ import { useRegisterMutation } from '@/redux/slices/userApi';
 import { useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useRouter } from 'next/navigation'
+
+
 const RegisterForm = () => {
-  
+  const router = useRouter();
   const [register, { isLoading, isError }] = useRegisterMutation();
   const [formData, setFormData] = useState({
     fullName: '',
@@ -31,6 +34,7 @@ const RegisterForm = () => {
       } else {
         console.log('Registration successful:', result.data);
         toast.success('Registration successful!');
+        router.push('/login');
         
       }
     } catch (err) {

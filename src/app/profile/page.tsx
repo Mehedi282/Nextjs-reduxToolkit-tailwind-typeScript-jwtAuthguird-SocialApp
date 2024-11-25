@@ -4,13 +4,32 @@ import PostModal from '@/components/modals/CreatePost';
 import ProfileFormModal from '@/components/modals/EditProfile';
 import UpdateProfileFormModal from '@/components/modals/UpdateProfile';
 import { Post } from '@/interfaces/user';
+import { resetSubmissionSuccess, selectSubmissionSuccess } from '@/redux/slices/isSubmitted';
 import { useGetUserByIdQuery } from '@/redux/slices/userApi';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import ListIcon from '@mui/icons-material/List';
+import DeletePostModal from '@/components/modals/PostOptions';
 
 
 function Page() {
-  const id = localStorage.getItem('userId');
-  const { data, error, isLoading } = useGetUserByIdQuery(id);
+  const [id, setId] = useState<string | null>(null);
+  useEffect(() => {
+    const userId = localStorage.getItem('userId');
+    setId(userId);
+  }, []);
+  
+  const [currentPostId, setCurrentPostId] = useState<number | null>(null);
+  const { data, error, isLoading, refetch  } = useGetUserByIdQuery(id);
+  const submissionSuccess = useSelector(selectSubmissionSuccess);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (submissionSuccess) {
+      refetch(); // Refetch user data
+      dispatch(resetSubmissionSuccess()); // Reset submission success after refetch
+    }
+  }, [submissionSuccess, refetch, dispatch]);
   AuthGuird();
 
   if (isLoading) {
@@ -23,12 +42,14 @@ function Page() {
 
   const userDetails = data?.userDetails;
   const likes = data?.likes || [];
-  const posts = data?.posts || [];
+  const posts: Post[] = [...(data?.posts || [])];
+  posts.sort((a, b) => b.id - a.id);
+  
 
 
 
   return (
-    <div className='px-20 h-screen pt-5 flex flex-row bg-gray-900 text-white gap-5' >
+    <div className='px-20 h-screen pt-5 flex flex-row bg-gray-900 text-white gap-5'>
       <div className='w-5/12 flex flex-col gap-5 bg-gray-800 rounded-xl pt-2'>
         <div className='flex flex-col items-center w-full gap-2'>
           <img className='h-64 w-64 rounded-full ' src={userDetails?.profilePicture || 'https://www.pngplay.com/wp-content/uploads/12/User-Avatar-Profile-Background-PNG-Clip-Art.png'} alt="Profile" />
@@ -58,9 +79,14 @@ function Page() {
           {posts.map((postData: Post) => (
             <div key={postData.id} className="my-4 p-4  bg-gray-700 rounded-md ">
               {/* Display user information */}
-              <div className="flex items-center mb-4">
-                <img src={userDetails?.profilePicture} className="w-10 h-10 rounded-full mr-2" alt="Profile" />
-                <p className="font-bold">{userDetails?.fullName}</p>
+              <div className="flex items-center mb-4 ">
+                <div className='flex flex-row justify-between w-full'>
+                  <div className=''><img src={userDetails?.profilePicture} className="w-10 h-10 rounded-full mr-2" alt="Profile" />
+                  </div>
+                  <div  onMouseEnter={() => setCurrentPostId(postData.id)}>
+                    <DeletePostModal postId = {currentPostId}/>
+                  </div>
+                </div>
               </div>
               {/* Display post content if available */}
               {postData.content && <p className="my-2">{postData.content} </p>}

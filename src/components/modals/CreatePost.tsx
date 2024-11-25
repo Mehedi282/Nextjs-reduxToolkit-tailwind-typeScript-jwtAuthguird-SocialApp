@@ -1,13 +1,13 @@
-// pages/index.tsx
-
+import { setSubmissionSuccess } from "@/redux/slices/isSubmitted";
 import { useCreatePostMutation } from "@/redux/slices/postApi";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 
 
 
 const PostModal: React.FC = () => {
+  const dispatch = useDispatch();
   const [createPost, { isLoading: isPostLoading, isError: isPostError }] = useCreatePostMutation();
-
   const [isModalOpen, setModalOpen] = useState(false);
   const [photos, setPhotos] = useState<File[]>([]);
   const [caption, setCaption] = useState<string>("");
@@ -31,15 +31,17 @@ const PostModal: React.FC = () => {
         try {
           // Await the mutation result and check its status
           const result = await createPost(formDataToSubmit).unwrap(); // Use unwrap() to directly access data or throw an error
+          
           console.log('Submission successful:', result);
         } catch (error) {
           console.error('Failed to submit:', error);
+          dispatch(setSubmissionSuccess(true));
         }
 
     // Reset the state after upload
     setPhotos([]);
     setCaption("");
-    setModalOpen(false);
+    setModalOpen(false); 
   };
 
   // Create an array of image URLs for preview
