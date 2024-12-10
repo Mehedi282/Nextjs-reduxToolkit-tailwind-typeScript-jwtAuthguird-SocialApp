@@ -10,6 +10,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ListIcon from '@mui/icons-material/List';
 import DeletePostModal from '@/components/modals/PostOptions';
+import UploadVideo from '@/components/modals/uploadVideo';
 
 
 function Page() {
@@ -18,9 +19,9 @@ function Page() {
     const userId = localStorage.getItem('userId');
     setId(userId);
   }, []);
-  
+
   const [currentPostId, setCurrentPostId] = useState<number | null>(null);
-  const { data, error, isLoading, refetch  } = useGetUserByIdQuery(id);
+  const { data, error, isLoading, refetch } = useGetUserByIdQuery(id);
   const submissionSuccess = useSelector(selectSubmissionSuccess);
   const dispatch = useDispatch();
 
@@ -44,7 +45,7 @@ function Page() {
   const likes = data?.likes || [];
   const posts: Post[] = [...(data?.posts || [])];
   posts.sort((a, b) => b.id - a.id);
-  
+
 
 
 
@@ -69,12 +70,15 @@ function Page() {
             <p className='font-serif font-bold'>Studied at {userDetails?.education}</p>
           </div>
         </div>
-      {userDetails == null? <ProfileFormModal/>: <UpdateProfileFormModal/>}
-        
+        {userDetails == null ? <ProfileFormModal /> : <UpdateProfileFormModal />}
+
       </div>
 
       <div className='w-7/12 bg-gray-800 px-5 pt-2 rounded-xl overflow-hidden overflow-y-auto no-scrollbar '>
-        <PostModal/>
+        <div className='flex gap-2 justify-center w-full'>
+          <div className='w-full '><PostModal /></div>
+          <div className='w-full'><UploadVideo /></div>
+        </div>
         <div>
           {posts.map((postData: Post) => (
             <div key={postData.id} className="my-4 p-4  bg-gray-700 rounded-md ">
@@ -83,13 +87,23 @@ function Page() {
                 <div className='flex flex-row justify-between w-full'>
                   <div className=''><img src={userDetails?.profilePicture} className="w-10 h-10 rounded-full mr-2" alt="Profile" />
                   </div>
-                  <div  onMouseEnter={() => setCurrentPostId(postData.id)}>
-                    <DeletePostModal postId = {currentPostId}/>
+                  <div onMouseEnter={() => setCurrentPostId(postData.id)}>
+                    <DeletePostModal postId={currentPostId} />
                   </div>
                 </div>
               </div>
               {/* Display post content if available */}
               {postData.content && <p className="my-2">{postData.content} </p>}
+              {
+                postData.video && (
+                  <div className='flex justify-center'>
+                    <video className='rounded-2xl' controls width="350" height="400" >
+                      <source src={postData.video} type="video/mp4" />
+                      Your browser does not support the video tag.
+                    </video>
+                  </div>
+                )
+              }
               {/* Display post images if available */}
               {postData.photos && JSON.parse(postData.photos).length > 0 && (
                 <div className="flex flex-wrap">

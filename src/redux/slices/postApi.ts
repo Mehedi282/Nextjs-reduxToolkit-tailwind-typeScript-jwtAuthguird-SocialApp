@@ -14,11 +14,12 @@ export const postApi = createApi({
       return headers;
     },
   }),
-  tagTypes: ['Posts','User'], // Define tag types for invalidation
+  tagTypes: ['Posts', 'User'],
   endpoints: (builder) => ({
     createPost: builder.mutation({
       query: (formDataToSubmit) => {
         const userId = localStorage.getItem('userId');
+        if (!userId) throw new Error("User ID is missing from localStorage.");
         return {
           url: `/post/${userId}`,
           method: 'POST',
@@ -27,25 +28,38 @@ export const postApi = createApi({
       },
       invalidatesTags: (result, error, { userId }) => [
         { type: 'Posts', id: 'LIST' },
-        { type: 'User', id: 'USER' }, 
-      ], 
+        { type: 'User', id: userId },
+      ],
     }),
 
-    getAllPoets: builder.query({
-      query: () => '/post',
-      
-    }),
-
-    deletePost: builder.mutation({
-      query: (id) => {
+    uploadVideo: builder.mutation({
+      query: (formDataToSubmit) => {
+        const userId = localStorage.getItem('userId');
+        if (!userId) throw new Error("User ID is missing from localStorage.");
         return {
-          url: `/post/${id}`,
-          method:'DELETE'
+          url: `/post/uploadVideo/${userId}`,
+          method: 'POST',
+          body: formDataToSubmit,
         };
       },
     }),
 
+    getAllPoets: builder.query({
+      query: () => '/post',
+    }),
+
+    deletePost: builder.mutation({
+      query: (id) => ({
+        url: `/post/${id}`,
+        method: 'DELETE',
+      }),
+    }),
   }),
 });
 
-export const { useCreatePostMutation, useGetAllPoetsQuery, useDeletePostMutation} = postApi;
+export const {
+  useCreatePostMutation,
+  useGetAllPoetsQuery,
+  useDeletePostMutation,
+  useUploadVideoMutation,
+} = postApi;

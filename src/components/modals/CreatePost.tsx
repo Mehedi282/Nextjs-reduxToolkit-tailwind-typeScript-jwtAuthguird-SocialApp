@@ -49,10 +49,10 @@ const PostModal: React.FC = () => {
 
   return (
     <div className="">
-      <div className="flex justify-center pt-5">
+      <div className="flex justify-center pt-3">
         <button
           onClick={() => setModalOpen(true)}
-          className="bg-gray-900 w-3/12 py-3 rounded-full text-white"
+          className="bg-gray-900 w-5/12 py-3 rounded-full text-white"
         >
           Create new post
         </button>

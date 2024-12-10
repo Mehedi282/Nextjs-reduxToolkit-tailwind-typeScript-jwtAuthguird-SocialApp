@@ -24,6 +24,7 @@ export interface Post {
   id: number;
   photos: string; // Array of image URLs
   content: string;
+  video:string,
   userId: number;
   likes: Like[]; // Array of Like objects
   user: User; // User object with details
