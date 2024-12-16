@@ -19,11 +19,17 @@ export interface User {
 export interface Like {
   id: number;
 }
+export interface Comment {
+  id: number;
+  comment: string;
+  user: User;
+}
 
 export interface Post {
   id: number;
   photos: string; // Array of image URLs
   content: string;
+  comments:Comment[];
   video:string,
   userId: number;
   likes: Like[]; // Array of Like objects

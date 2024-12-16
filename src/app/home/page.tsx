@@ -1,5 +1,5 @@
-'use client'
-import AuthGuird from '@/authGuird/authGuird'
+'use client';
+import AuthGuird from '@/authGuird/authGuird';
 import { Post } from '@/interfaces/user';
 import { resetSubmissionSuccess, selectSubmissionSuccess } from '@/redux/slices/isSubmitted';
 import { useGetAllPoetsQuery } from '@/redux/slices/postApi';
@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 function Page() {
   AuthGuird();
   const [id, setId] = useState<string | null>(null);
+  const [comments, setComments] = useState<{ [postId: number]: string }>({}); // To store new comments locally
 
   useEffect(() => {
     const userId = localStorage.getItem('userId');
@@ -33,6 +34,21 @@ function Page() {
   if (!isError && !getpostLoading && postsData) {
     posts = [...postsData].sort((a, b) => b.id - a.id);
   }
+
+  const handleCommentChange = (postId: number, comment: string) => {
+    setComments({ ...comments, [postId]: comment });
+  };
+
+  const handleCommentSubmit = (postId: number) => {
+    const comment = comments[postId]?.trim();
+    if (!comment) return;
+
+    // Call API or Redux action to submit the comment
+    console.log(`Submitting comment for post ${postId}:`, comment);
+
+    // Clear the comment input field for the post
+    setComments({ ...comments, [postId]: '' });
+  };
 
   if (isLoading) {
     return (
@@ -93,6 +109,31 @@ function Page() {
                   <span className="text-xs">No reacts yet!</span>
                 </div>
               )}
+              {/* Comment Section */}
+              <div className="mt-4">
+                <div className=''>
+                  <textarea
+                    className="w-full p-2 rounded bg-gray-700 text-white"
+                    placeholder="Write a comment..."
+                    value={comments[postData.id] || ''}
+                    onChange={(e) => handleCommentChange(postData.id, e.target.value)}
+                  />
+                  <button
+                    className="mt-2 px-4 py-2 bg-blue-600 rounded hover:bg-blue-700"
+                    onClick={() => handleCommentSubmit(postData.id)}
+                  >
+                    Add Comment
+                  </button>
+                </div>
+                {/* Display Existing Comments */}
+                {postData.comments.map((comment, index) => (
+                  <div  key={index} className="mb-2 mt-5">
+                    <p className="text-sm text-gray-400">{comment.user.fullName}:</p>
+                    <p>{comment.comment}</p>
+                  </div>
+                ))}
+
+              </div>
             </div>
           ))}
         </div>
