@@ -32,8 +32,6 @@ const LoginPage = () => {
             password: password
         }
 
-        console.log(loginData);
-
         try {
             const result: MutationResult = await login(loginData);
             if (result.error) {

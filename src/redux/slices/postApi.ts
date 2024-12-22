@@ -1,11 +1,10 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-
-const baseUrl = 'http://localhost:3001';
+import { BASE_URL } from '../../../config';
 
 export const postApi = createApi({
   reducerPath: 'postApi',
   baseQuery: fetchBaseQuery({
-    baseUrl,
+    baseUrl: BASE_URL,
     prepareHeaders: (headers, { getState }) => {
       const token = localStorage.getItem('token');
       if (token) {
@@ -54,6 +53,19 @@ export const postApi = createApi({
         method: 'DELETE',
       }),
     }),
+
+
+    createComment: builder.mutation({
+      query: ({formDataToSubmit, postId}) => {
+        const userId = localStorage.getItem('userId');
+        if (!userId) throw new Error("User ID is missing from localStorage.");
+        return {
+          url: `/comments/${userId}/${postId}`,
+          method: 'POST',
+          body: formDataToSubmit,
+        };
+      },
+    }),
   }),
 });
 
@@ -62,4 +74,5 @@ export const {
   useGetAllPoetsQuery,
   useDeletePostMutation,
   useUploadVideoMutation,
+  useCreateCommentMutation
 } = postApi;

@@ -1,8 +1,8 @@
 'use client';
 import AuthGuird from '@/authGuird/authGuird';
 import { Post } from '@/interfaces/user';
-import { resetSubmissionSuccess, selectSubmissionSuccess } from '@/redux/slices/isSubmitted';
-import { useGetAllPoetsQuery } from '@/redux/slices/postApi';
+import { resetSubmissionSuccess, selectSubmissionSuccess, setSubmissionSuccess } from '@/redux/slices/isSubmitted';
+import { useCreateCommentMutation, useGetAllPoetsQuery } from '@/redux/slices/postApi';
 import { useGetUserQuery } from '@/redux/slices/userApi';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -17,8 +17,9 @@ function Page() {
     setId(userId);
   }, []);
 
-  const { data: allUsers, isLoading } = useGetUserQuery(null);
-  const { data: postsData, isError, isLoading: getpostLoading, refetch } = useGetAllPoetsQuery(null);
+    const [createComment, { isLoading: isCreatecommentL, isError:isCrtCmntEr }] = useCreateCommentMutation();
+    const { data: allUsers, isLoading } = useGetUserQuery(null);
+    const { data: postsData, isError, isLoading: getpostLoading, refetch } = useGetAllPoetsQuery(null);
 
   const submissionSuccess = useSelector(selectSubmissionSuccess);
   const dispatch = useDispatch();
@@ -43,8 +44,19 @@ function Page() {
     const comment = comments[postId]?.trim();
     if (!comment) return;
 
-    // Call API or Redux action to submit the comment
-    console.log(`Submitting comment for post ${postId}:`, comment);
+    const formDataToSubmit ={
+                comment: comment
+    }
+
+    try {
+              // Await the mutation result and check its status
+              const result = createComment({formDataToSubmit, postId}).unwrap(); // Use unwrap() to directly access data or throw an error
+              
+              console.log('Submission successful:', result);
+            } catch (error) {
+              console.error('Failed to submit:', error);
+              dispatch(setSubmissionSuccess(true));
+            }
 
     // Clear the comment input field for the post
     setComments({ ...comments, [postId]: '' });
@@ -75,6 +87,7 @@ function Page() {
               </div>
               {/* Post Content */}
               {postData.content && <p className="my-2">{postData.content}</p>}
+              {postData.tag && <p className="my-2">#{postData.tag}</p>}
               {/* Video */}
               {postData.video && (
                 <div className="flex justify-center my-4">

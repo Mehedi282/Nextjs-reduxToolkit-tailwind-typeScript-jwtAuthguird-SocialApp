@@ -9,6 +9,8 @@ const UploadVideo: React.FC = () => {
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
   const [video, setVideo] = useState<File | null>(null);
   const [videoPreview, setVideoPreview] = useState<string | null>(null);
+  const [title, setTitle] = useState<string>("");
+  const [hashtags, setHashtags] = useState<string>("");
 
   // Clean up video preview URL on component unmount or video change
   useEffect(() => {
@@ -28,15 +30,15 @@ const UploadVideo: React.FC = () => {
   };
 
   const handleUpload = async (): Promise<void> => {
-    if (!video) {
-      alert("Please select a video to upload.");
+    if (!video || !title.trim()) {
+      alert("Please provide a title and select a video to upload.");
       return;
     }
 
     const formDataToSubmit = new FormData();
     formDataToSubmit.append("video", video);
-
-    console.log("Submitting FormData:", Array.from(formDataToSubmit.entries()));
+    formDataToSubmit.append("content", title);
+    formDataToSubmit.append("tag", hashtags);
 
     try {
       const result = await uploadVideo(formDataToSubmit).unwrap();
@@ -45,6 +47,8 @@ const UploadVideo: React.FC = () => {
       // Reset state after successful upload
       setVideo(null);
       setVideoPreview(null);
+      setTitle("");
+      setHashtags("");
       setModalOpen(false);
     } catch (error: any) {
       console.error("Failed to submit:", error);
@@ -79,6 +83,26 @@ const UploadVideo: React.FC = () => {
           ></div>
           <div className="bg-gray-900 rounded-lg shadow-lg z-10 p-6 max-w-3xl w-full">
             <h2 className="text-xl font-bold mb-4">Upload Video</h2>
+
+            {/* Title Input */}
+            <input
+              type="text"
+              placeholder="Enter video title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="mb-4 border rounded p-2 w-full text-black"
+            />
+
+            {/* Hashtags Input */}
+            <input
+              type="text"
+              placeholder="Enter hashtags (comma-separated)"
+              value={hashtags}
+              onChange={(e) => setHashtags(e.target.value)}
+              className="mb-4 border rounded p-2 w-full text-black"
+            />
+
+            {/* File Input */}
             <input
               type="file"
               accept="video/*"
@@ -130,3 +154,5 @@ const UploadVideo: React.FC = () => {
 };
 
 export default UploadVideo;
+
+

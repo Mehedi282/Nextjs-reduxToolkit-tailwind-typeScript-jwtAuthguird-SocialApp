@@ -30,7 +30,8 @@ export interface Post {
   photos: string; // Array of image URLs
   content: string;
   comments:Comment[];
-  video:string,
+  video:string;
+  tag:string;
   userId: number;
   likes: Like[]; // Array of Like objects
   user: User; // User object with details
