@@ -17,9 +17,9 @@ function Page() {
     setId(userId);
   }, []);
 
-    const [createComment, { isLoading: isCreatecommentL, isError:isCrtCmntEr }] = useCreateCommentMutation();
-    const { data: allUsers, isLoading } = useGetUserQuery(null);
-    const { data: postsData, isError, isLoading: getpostLoading, refetch } = useGetAllPoetsQuery(null);
+  const [createComment, { isLoading: isCreatecommentL, isError: isCrtCmntEr }] = useCreateCommentMutation();
+  const { data: allUsers, isLoading } = useGetUserQuery(null);
+  const { data: postsData, isError, isLoading: getpostLoading, refetch } = useGetAllPoetsQuery(null);
 
   const submissionSuccess = useSelector(selectSubmissionSuccess);
   const dispatch = useDispatch();
@@ -40,23 +40,21 @@ function Page() {
     setComments({ ...comments, [postId]: comment });
   };
 
-  const handleCommentSubmit = (postId: number) => {
+  const handleCommentSubmit = async (postId: number) => {
     const comment = comments[postId]?.trim();
     if (!comment) return;
 
-    const formDataToSubmit ={
-                comment: comment
-    }
+    const formDataToSubmit = {
+      comment: comment,
+    };
 
     try {
-              // Await the mutation result and check its status
-              const result = createComment({formDataToSubmit, postId}).unwrap(); // Use unwrap() to directly access data or throw an error
-              
-              console.log('Submission successful:', result);
-            } catch (error) {
-              console.error('Failed to submit:', error);
-              dispatch(setSubmissionSuccess(true));
-            }
+      const result = await createComment({ formDataToSubmit, postId }).unwrap();
+      console.log('Submission successful:', result);
+      dispatch(setSubmissionSuccess(true));
+    } catch (error) {
+      console.error('Failed to submit:', error);
+    }
 
     // Clear the comment input field for the post
     setComments({ ...comments, [postId]: '' });
@@ -124,28 +122,31 @@ function Page() {
               )}
               {/* Comment Section */}
               <div className="mt-4">
-                <div className=''>
-                  <textarea
-                    className="w-full p-2 rounded bg-gray-700 text-white"
-                    placeholder="Write a comment..."
-                    value={comments[postData.id] || ''}
-                    onChange={(e) => handleCommentChange(postData.id, e.target.value)}
-                  />
-                  <button
-                    className="mt-2 px-4 py-2 bg-blue-600 rounded hover:bg-blue-700"
-                    onClick={() => handleCommentSubmit(postData.id)}
-                  >
-                    Add Comment
-                  </button>
-                </div>
-                {/* Display Existing Comments */}
-                {postData.comments.map((comment, index) => (
-                  <div  key={index} className="mb-2 mt-5">
-                    <p className="text-sm text-gray-400">{comment.user.fullName}:</p>
-                    <p>{comment.comment}</p>
-                  </div>
-                ))}
+                {/* Text Area for Adding Comments */}
+                <textarea
+                  className="w-full p-2 rounded bg-gray-700 text-white"
+                  placeholder="Write a comment..."
+                  value={comments[postData.id] || ''}
+                  onChange={(e) => handleCommentChange(postData.id, e.target.value)}
+                />
+                <button
+                  className="mt-2 px-4 py-2 bg-blue-600 rounded hover:bg-blue-700"
+                  onClick={() => handleCommentSubmit(postData.id)}
+                >
+                  Add Comment
+                </button>
 
+                {/* Display Existing Comments */}
+                {postData.comments && postData.comments.length > 0 ? (
+                  postData.comments.map((comment, index) => (
+                    <div key={index} className="mb-2 mt-5">
+                      <p className="text-sm text-gray-400">{comment.user.fullName}:</p>
+                      <p>{comment.comment}</p>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-gray-400 mt-2">No comments yet!</p>
+                )}
               </div>
             </div>
           ))}
