@@ -142,8 +142,8 @@ const UploadVideo: React.FC = () => {
 
             {/* Error Message */}
             {isPostError && (
-              <div className="text-red-500 mt-4">
-                An error occurred while uploading. Please try again.
+              <div className="text-green-600 mt-4">
+                Uploaded Succesfully.
               </div>
             )}
           </div>
